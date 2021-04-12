@@ -36,6 +36,7 @@ import (
 	"github.com/theupdateframework/notary"
 	notaryclient "github.com/theupdateframework/notary/client"
 	"github.com/theupdateframework/notary/passphrase"
+	u "github.com/docker/cli/utils"
 )
 
 // Streams is an interface which exposes the standard input and output streams
@@ -460,6 +461,7 @@ type ClientInfo struct {
 // It applies by default the standard streams, and the content trust from
 // environment.
 func NewDockerCli(ops ...DockerCliOption) (*DockerCli, error) {
+	defer u.Duration(u.Track("cli NewDockerCli"))
 	cli := &DockerCli{}
 	defaultOps := []DockerCliOption{
 		WithContentTrustFromEnv(),

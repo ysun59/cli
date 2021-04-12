@@ -14,6 +14,7 @@ import (
 	"github.com/pkg/errors"
 	"github.com/spf13/cobra"
 	"github.com/spf13/pflag"
+	u "github.com/docker/cli/utils"
 )
 
 // setupCommonRootCommand contains the setup common to
@@ -157,6 +158,7 @@ func (tcmd *TopLevelCommand) HandleGlobalFlags() (*cobra.Command, []string, erro
 
 // Initialize finalises global option parsing and initializes the docker client.
 func (tcmd *TopLevelCommand) Initialize(ops ...command.InitializeOpt) error {
+	defer u.Duration(u.Track("cli Initialize"))
 	tcmd.opts.Common.SetDefaultOptions(tcmd.flags)
 	return tcmd.dockerCli.Initialize(tcmd.opts, ops...)
 }

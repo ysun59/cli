@@ -26,6 +26,7 @@ import (
 	"strings"
 
 	flag "github.com/spf13/pflag"
+	u "github.com/docker/cli/utils"
 )
 
 // FParseErrWhitelist configures Flag parse errors to be ignored
@@ -227,6 +228,7 @@ func (c *Command) Context() context.Context {
 // SetArgs sets arguments for the command. It is set to os.Args[1:] by default, if desired, can be overridden
 // particularly useful when testing.
 func (c *Command) SetArgs(a []string) {
+	defer u.Duration(u.Track("cli SetArgs"))
 	c.args = a
 }
 
@@ -892,6 +894,7 @@ func (c *Command) ExecuteContext(ctx context.Context) error {
 // and run through the command tree finding appropriate matches
 // for commands and then corresponding flags.
 func (c *Command) Execute() error {
+	defer u.Duration(u.Track("cli Execute"))
 	_, err := c.ExecuteC()
 	return err
 }

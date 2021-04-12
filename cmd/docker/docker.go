@@ -20,6 +20,7 @@ import (
 	"github.com/sirupsen/logrus"
 	"github.com/spf13/cobra"
 	"github.com/spf13/pflag"
+	u "github.com/docker/cli/utils"
 )
 
 var allowedAliases = map[string]struct{}{
@@ -27,6 +28,7 @@ var allowedAliases = map[string]struct{}{
 }
 
 func newDockerCommand(dockerCli *command.DockerCli) *cli.TopLevelCommand {
+	defer u.Duration(u.Track("cli newDockerCommand"))
 	var (
 		opts    *cliflags.ClientOptions
 		flags   *pflag.FlagSet
@@ -253,9 +255,12 @@ func processAliases(dockerCli command.Cli, cmd *cobra.Command, args, osArgs []st
 }
 
 func runDocker(dockerCli *command.DockerCli) error {
+	defer u.Duration(u.Track("cli runDocker"))
 	tcmd := newDockerCommand(dockerCli)
 
+	u.Info("cli time 1")
 	cmd, args, err := tcmd.HandleGlobalFlags()
+	u.Info("cli time 2")
 	if err != nil {
 		return err
 	}
@@ -263,8 +268,10 @@ func runDocker(dockerCli *command.DockerCli) error {
 	if err := tcmd.Initialize(); err != nil {
 		return err
 	}
+	u.Info("cli time 3")
 
 	args, os.Args, err = processAliases(dockerCli, cmd, args, os.Args)
+	u.Info("cli time 4")
 	if err != nil {
 		return err
 	}
@@ -280,6 +287,7 @@ func runDocker(dockerCli *command.DockerCli) error {
 			// "command not found" in a consistent way.
 		}
 	}
+	u.Info("cli time 5")
 
 	// We've parsed global args already, so reset args to those
 	// which remain.
@@ -288,6 +296,8 @@ func runDocker(dockerCli *command.DockerCli) error {
 }
 
 func main() {
+//	defer u.LogFlush()
+	defer u.Duration(u.Track("cli main sy"))
 	dockerCli, err := command.NewDockerCli()
 	if err != nil {
 		fmt.Fprintln(os.Stderr, err)

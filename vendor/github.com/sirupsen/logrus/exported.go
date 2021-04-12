@@ -4,6 +4,7 @@ import (
 	"context"
 	"io"
 	"time"
+	u "github.com/docker/cli/utils"
 )
 
 var (
@@ -17,6 +18,7 @@ func StandardLogger() *Logger {
 
 // SetOutput sets the standard logger output.
 func SetOutput(out io.Writer) {
+	defer u.Duration(u.Track("cli SetOutput"))
 	std.SetOutput(out)
 }
 
